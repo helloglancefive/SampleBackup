@@ -1,0 +1,130 @@
+# GlanceFive — Laptop stack with Cloudflare Tunnel
+#
+# Architecture:
+#   glancefive.com          → your existing website (untouched)
+#   app.glancefive.com      → Netlify (React frontend, always up)
+#   api.glancefive.com      → Cloudflare Tunnel → this laptop → api:8000
+#
+# Start:   docker compose -f docker-compose.local.yml up -d
+# Stop:    docker compose -f docker-compose.local.yml down
+# Logs:    docker compose -f docker-compose.local.yml logs -f
+# Rebuild: docker compose -f docker-compose.local.yml up -d --build
+
+x-api-common: &api-common
+  build:
+    context: ./backend
+    dockerfile: Dockerfile
+  env_file: .env.local
+  environment:
+    DATABASE_URL: postgresql://glancefive:${POSTGRES_PASSWORD}@db:5432/glancefive
+    REDIS_URL: redis://redis:6379/0
+    CELERY_BROKER_URL: redis://redis:6379/1
+    CELERY_RESULT_URL: redis://redis:6379/2
+    ENVIRONMENT: production
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  restart: unless-stopped
+
+services:
+
+  # ── PostgreSQL ───────────────────────────────────────────────────────────────
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: glancefive
+      POSTGRES_USER: glancefive
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U glancefive"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  # ── Redis ────────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  # ── API (FastAPI) ────────────────────────────────────────────────────────────
+  # Port 8000 is NOT exposed to the internet — cloudflared reaches it internally
+  api:
+    <<: *api-common
+    command: >
+      sh -c "alembic upgrade head &&
+             python seed.py &&
+             uvicorn main:app --host 0.0.0.0 --port 8000 --workers 1"
+    ports:
+      - "127.0.0.1:8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health', timeout=3)"]
+      interval: 15s
+      timeout: 10s
+      retries: 8
+      start_period: 60s
+
+  # ── Celery worker ────────────────────────────────────────────────────────────
+  worker:
+    <<: *api-common
+    command: >
+      celery -A celery_app.celery_app worker
+      --loglevel=info
+      --concurrency=2
+      -Q default
+
+  # ── Celery beat (daily scheduled fetches: 02:00 and 02:30 UTC) ───────────────
+  beat:
+    <<: *api-common
+    command: >
+      celery -A celery_app.celery_app beat
+      --loglevel=info
+      --scheduler celery.beat.PersistentScheduler
+    volumes:
+      - beat_data:/app/celerybeat-schedule
+
+  # ── Flower (Celery monitor — localhost only, never tunneled) ─────────────────
+  flower:
+    <<: *api-common
+    command: celery -A celery_app.celery_app flower --port=5555
+    ports:
+      - "127.0.0.1:5555:5555"
+    environment:
+      DATABASE_URL: postgresql://glancefive:${POSTGRES_PASSWORD}@db:5432/glancefive
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_URL: redis://redis:6379/2
+      ENVIRONMENT: production
+      FLOWER_BASIC_AUTH: ${FLOWER_USER:-admin}:${FLOWER_PASSWORD:-changeme}
+
+  # ── Cloudflare Tunnel ────────────────────────────────────────────────────────
+  # Connects api.glancefive.com → http://api:8000 (internal Docker network)
+  # No ports opened on your laptop — Cloudflare handles SSL and routing
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pg_data:
+  redis_data:
+  beat_data:

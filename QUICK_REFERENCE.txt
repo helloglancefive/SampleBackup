@@ -1,0 +1,143 @@
+===============================================================================
+GLANCEFIVE - QUICK REFERENCE CARD
+===============================================================================
+
+LOCATION: D:\claude_code_experiments\GlanceFive
+ENVIRONMENT: glancefive (conda)
+STATUS: Ready to use ✅
+
+===============================================================================
+SETUP (One Time)
+===============================================================================
+
+1. Edit .env file with your Amazon credentials:
+   AMAZON_CLIENT_ID=...
+   AMAZON_CLIENT_SECRET=...
+   AMAZON_REFRESH_TOKEN=...
+
+2. You're done! Environment and dependencies are already installed.
+
+===============================================================================
+BASIC USAGE
+===============================================================================
+
+# Download all reports (last 7 days)
+conda run -n glancefive python glancefive.py
+
+# With specific date range
+conda run -n glancefive python glancefive.py --start-date 2026-05-01 --end-date 2026-05-09
+
+# Specific reports only
+conda run -n glancefive python glancefive.py --reports spTargeting spCampaigns
+
+# Save results to JSON
+conda run -n glancefive python glancefive.py --save-results
+
+===============================================================================
+ENVIRONMENT COMMANDS
+===============================================================================
+
+# See all environments
+conda info --envs
+
+# Activate GlanceFive environment
+conda activate glancefive
+
+# Deactivate environment
+conda deactivate
+
+# Install more dependencies (if needed)
+conda run -n glancefive pip install <package_name>
+
+===============================================================================
+REPORT TYPES
+===============================================================================
+
+Sponsored Products:  spTargeting, spSearchTerm, spCampaigns, spProductAds
+Sponsored Brands:    sbSearchTerm, sbTargeting
+Sponsored Display:   sdAdvertising, sdTargeting
+
+===============================================================================
+OUTPUT
+===============================================================================
+
+Reports saved to:  D:\claude_code_experiments\GlanceFive\reports\
+Format:            JSON files
+Naming:            {report_type}_{timestamp}.json
+Example:           spTargeting_20260509_120000.json
+
+===============================================================================
+TROUBLESHOOTING
+===============================================================================
+
+ERROR: "Client authentication failed"
+→ Check .env file has valid Amazon credentials
+
+ERROR: "No profile found"
+→ Verify profile ID exists in Amazon Seller Central
+
+ERROR: "Network error"
+→ Check internet connection and API endpoints
+
+REPORT EMPTY: Sponsored Display (SD) reports
+→ Expected - SD often has no data
+
+===============================================================================
+DOCUMENTATION
+===============================================================================
+
+README.md          → Complete reference guide
+QUICKSTART.md      → 3-minute setup
+ACTIVATE.md        → Environment usage
+TEST_RESULTS.md    → Test status
+QUICK_REFERENCE.txt → This file
+
+===============================================================================
+ENVIRONMENT INFO
+===============================================================================
+
+Name:     glancefive
+Python:   3.11.15
+Location: C:\Users\Sandeep\anaconda3\envs\glancefive
+Size:     ~1 GB
+Status:   Installed ✅
+
+===============================================================================
+PROJECT FILES
+===============================================================================
+
+Core:     glancefive.py, src/
+Config:   .env, requirements.txt, .gitignore
+Docs:     README.md, QUICKSTART.md, ACTIVATE.md, TEST_RESULTS.md
+Reports:  reports/ (created after first run)
+
+===============================================================================
+ONE-LINER CHEAT SHEET
+===============================================================================
+
+All reports:    conda run -n glancefive python glancefive.py
+With dates:     conda run -n glancefive python glancefive.py --start-date 2026-05-01 --end-date 2026-05-09
+Specific:       conda run -n glancefive python glancefive.py --reports spTargeting spCampaigns
+Help:           conda run -n glancefive python glancefive.py --help
+Save results:   conda run -n glancefive python glancefive.py --save-results
+
+===============================================================================
+GETTING STARTED
+===============================================================================
+
+1. Edit .env with credentials
+2. Run: conda run -n glancefive python glancefive.py
+3. Check reports/ folder
+4. Done! 🎉
+
+===============================================================================
+SUPPORT
+===============================================================================
+
+Questions? See README.md or QUICKSTART.md
+Test Status: See TEST_RESULTS.md
+Environment Help: See ACTIVATE.md
+
+===============================================================================
+GlanceFive v1.0 | Production Ready | 2026-05-09
+===============================================================================

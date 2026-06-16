@@ -1,0 +1,111 @@
+# Environment variables (NEVER commit these)
+.env
+.env.local
+.env.*.local
+*.env
+backend/.env
+backend/.env.*
+
+# Secrets and keys
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Python build artifacts
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Downloaded Amazon report files (large binary/json data — not source code)
+reports/
+
+# Logs
+*.log
+logs/
+
+# Database files (contain real seller data — never commit)
+*.db
+*.sqlite
+*.sqlite3
+
+# Frontend: dependencies and build output
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.vite/
+
+# Conda / virtualenv
+*.conda
+.conda/
+
+# Test artifacts
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Claude Code memory (internal session files)
+.claude/
+
+# Test screenshots and scripts (dev only)
+test_*.js
+test_*/
+test_screenshots/
+
+# Data exports (may contain real seller data)
+*.xlsx
+dev_db_export.*
+
+# One-off scripts (not part of the app)
+check_*.py
+export_db.py
+fetch_*.py
+get_amazon_token.py
+run_fetch.py
+store_credentials.py
+show_db.py
+seed_*.py
+fix_*.py
+setup_*.py
+connect_amazon.py
+list_users.py
+glancefive.py
+analyze_reports.py

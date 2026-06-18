@@ -9,15 +9,16 @@ function initials(name: string | undefined) {
 }
 
 const WORKSPACE_NAV = [
-  { label: 'Overview',    icon: 'grid',      href: '/overview' },
-  { label: 'Campaigns',   icon: 'campaigns', href: '/campaigns' },
-  { label: 'Keywords',    icon: 'tag',       href: '/keywords' },
-  { label: 'Products',    icon: 'box',       href: '/products' },
-  { label: 'Smart Recs',  icon: 'bolt',      href: '/recommendations' },
-  { label: 'Media Plan',  icon: 'calendar',  href: '/media-plan' },
-  { label: 'Placements',  icon: 'chart',     href: '/placements' },
-  { label: 'Reports',     icon: 'history',   href: '/fetch-history' },
-  { label: 'Subscription', icon: 'star',     href: '/subscription' },
+  { label: 'Overview',         icon: 'grid',        href: '/overview' },
+  { label: 'Campaigns',        icon: 'campaigns',   href: '/campaigns' },
+  { label: 'Keywords',         icon: 'tag',         href: '/keywords' },
+  { label: 'Products',         icon: 'box',         href: '/products' },
+  { label: 'Business Reports', icon: 'trending_up', href: '/sp-business' },
+  { label: 'Smart Recs',       icon: 'bolt',        href: '/recommendations' },
+  { label: 'Media Plan',       icon: 'calendar',    href: '/media-plan' },
+  { label: 'Placements',       icon: 'chart',       href: '/placements' },
+  { label: 'Reports',          icon: 'history',     href: '/fetch-history' },
+  { label: 'Subscription',     icon: 'star',        href: '/subscription' },
 ]
 
 export function WorkspaceSidebar({ user, unread }: { user: any; unread: number }) {

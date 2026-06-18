@@ -8,7 +8,8 @@ import {
 import {
   DashboardOutlined, HistoryOutlined, SettingsOutlined,
   NotificationsOutlined, LogoutOutlined, MenuOutlined,
-  PlaceOutlined, WorkspacePremiumOutlined,
+  PlaceOutlined, WorkspacePremiumOutlined, PeopleOutlined,
+  StorefrontOutlined,
 } from '@mui/icons-material'
 import { logout } from '../features/auth/authSlice'
 import { useGetUnreadCountQuery } from '../store/api'
@@ -18,6 +19,7 @@ const SIDEBAR_W = 220
 
 const navItems = [
   { label: 'Dashboard', icon: <DashboardOutlined />, path: '/dashboard' },
+  { label: 'Business Reports', icon: <StorefrontOutlined />, path: '/sp-business' },
   { label: 'Placements', icon: <PlaceOutlined />, path: '/placements' },
   { label: 'Fetch History', icon: <HistoryOutlined />, path: '/fetch-history' },
   { label: 'Subscription', icon: <WorkspacePremiumOutlined />, path: '/subscription' },
@@ -87,6 +89,46 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           )
         })}
       </List>
+
+      {/* Admin section — only for Admin role */}
+      {user?.role === 'Admin' && (
+        <>
+          <Divider sx={{ mx: 3, mb: 1.5 }} />
+          <Box sx={{ px: 2.5, mb: 0.5 }}>
+            <Typography sx={{
+              fontFamily: "'JetBrains Mono',monospace",
+              fontSize: '0.6rem', color: '#f0b429',
+              textTransform: 'uppercase', letterSpacing: '0.12em',
+            }}>
+              Admin
+            </Typography>
+          </Box>
+          <List sx={{ px: 1.5 }}>
+            {[{ label: 'Clients', icon: <PeopleOutlined />, path: '/admin/clients' }].map((item) => {
+              const active = location.pathname === item.path
+              return (
+                <ListItemButton
+                  key={item.path}
+                  component={Link}
+                  to={item.path}
+                  onClick={() => setMobileOpen(false)}
+                  sx={{
+                    borderRadius: '8px', mb: 0.5, px: 2, py: 1,
+                    color: active ? '#f0b429' : '#6e8faa',
+                    background: active ? 'rgba(240,180,41,0.08)' : 'transparent',
+                    border: active ? '1px solid rgba(240,180,41,0.18)' : '1px solid transparent',
+                    '&:hover': { color: '#d8eaf8', background: 'rgba(100,160,240,0.06)', border: '1px solid rgba(100,160,240,0.1)' },
+                    transition: 'all 0.15s',
+                  }}
+                >
+                  <ListItemIcon sx={{ minWidth: 36, color: 'inherit' }}>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.label} primaryTypographyProps={{ fontSize: '0.88rem', fontWeight: active ? 500 : 400 }} />
+                </ListItemButton>
+              )
+            })}
+          </List>
+        </>
+      )}
 
       <Divider sx={{ mx: 3, mb: 2 }} />
 

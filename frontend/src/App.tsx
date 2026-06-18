@@ -23,6 +23,8 @@ import PlacementsPage from './features/placements/PlacementsPage'
 import SubscriptionPage from './features/billing/SubscriptionPage'
 import CallbackPage from './pages/CallbackPage'
 import NotFoundPage from './pages/NotFoundPage'
+import AdminClientsPage from './features/admin/AdminClientsPage'
+import SpBusinessPage from './features/sp/SpBusinessPage'
 import ErrorBoundary from './components/ErrorBoundary'
 import { useGetMeQuery } from './store/api'
 import { setUser } from './features/auth/authSlice'
@@ -59,6 +61,7 @@ export default function App() {
         <Route path="/products" element={<ProtectedRoute><ProductsPage /></ProtectedRoute>} />
         <Route path="/recommendations" element={<ProtectedRoute><SmartRecsPage /></ProtectedRoute>} />
         <Route path="/media-plan" element={<ProtectedRoute><MediaPlanPage /></ProtectedRoute>} />
+        <Route path="/sp-business" element={<ProtectedRoute><SpBusinessPage /></ProtectedRoute>} />
 
         {/* ── Legacy /dashboard redirect ── */}
         <Route path="/dashboard" element={<Navigate to="/overview" replace />} />
@@ -71,6 +74,7 @@ export default function App() {
               <Layout>
                 <Routes>
                   <Route path="/fetch-history" element={<FetchHistoryPage />} />
+                  <Route path="/admin/clients" element={<AdminClientsPage />} />
                   <Route path="/settings" element={<CredentialsPage />} />
                   <Route path="/notifications" element={<NotificationsPage />} />
                   <Route path="/placements" element={<PlacementsPage />} />

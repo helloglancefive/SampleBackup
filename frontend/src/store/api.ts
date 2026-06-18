@@ -196,6 +196,52 @@ export const api = createApi({
       providesTags: ['ReportFetch'],
     }),
 
+    // SP-API Business Reports
+    getSpSummary: builder.query<any, { start_date?: string; end_date?: string; marketplace_id?: string }>({
+      query: ({ start_date, end_date, marketplace_id } = {}) => {
+        const p = new URLSearchParams()
+        if (start_date) p.set('start_date', start_date)
+        if (end_date) p.set('end_date', end_date)
+        if (marketplace_id) p.set('marketplace_id', marketplace_id)
+        const qs = p.toString()
+        return `/sp/summary${qs ? `?${qs}` : ''}`
+      },
+      providesTags: ['Dashboard'],
+    }),
+    getSpProducts: builder.query<any[], { page?: number; per_page?: number }>({
+      query: ({ page = 1, per_page = 50 } = {}) => `/sp/products?page=${page}&per_page=${per_page}`,
+      providesTags: ['Dashboard'],
+    }),
+    getSpProfitability: builder.query<any[], { start_date?: string; end_date?: string; limit?: number }>({
+      query: ({ start_date, end_date, limit = 50 } = {}) => {
+        const p = new URLSearchParams()
+        if (start_date) p.set('start_date', start_date)
+        if (end_date) p.set('end_date', end_date)
+        p.set('limit', String(limit))
+        return `/sp/profitability?${p.toString()}`
+      },
+      providesTags: ['Dashboard'],
+    }),
+    getSpProductDaily: builder.query<any[], { asin: string; start_date?: string; end_date?: string }>({
+      query: ({ asin, start_date, end_date }) => {
+        const p = new URLSearchParams()
+        if (start_date) p.set('start_date', start_date)
+        if (end_date) p.set('end_date', end_date)
+        return `/sp/products/${asin}/daily?${p.toString()}`
+      },
+      providesTags: ['Dashboard'],
+    }),
+    triggerSpFetch: builder.mutation<any, { start_date: string; end_date: string }>({
+      query: (body) => ({ url: '/sp/fetch', method: 'POST', body }),
+      invalidatesTags: ['Dashboard', 'ReportFetch'],
+    }),
+
+    // Admin — list all clients (Admin role only)
+    listClients: builder.query<any[], { page?: number; per_page?: number }>({
+      query: ({ page = 1, per_page = 50 }) => `/clients?page=${page}&per_page=${per_page}`,
+      providesTags: ['Client'],
+    }),
+
     // Clients — operations on the current user's client
     getMyClient: builder.query<any, void>({
       query: () => '/clients/me',
@@ -263,6 +309,7 @@ export const api = createApi({
 
 export const {
   useLoginMutation, useSignupMutation, useClientSignupMutation,
+  useListClientsQuery,
   useRequestPasswordResetMutation, useConfirmPasswordResetMutation,
   useGetMeQuery,
   useGetMetricsQuery, useGetChartsQuery, useGetDashboardSummaryQuery,
@@ -274,4 +321,6 @@ export const {
   useGetNotificationsQuery, useGetUnreadCountQuery, useMarkAllReadMutation,
   useLazyGetAdsAuthUrlQuery, useLazyGetSpAuthUrlQuery,
   useExchangeAdsCodeMutation, useExchangeSpCodeMutation,
+  useGetSpSummaryQuery, useGetSpProductsQuery, useGetSpProfitabilityQuery,
+  useGetSpProductDailyQuery, useTriggerSpFetchMutation,
 } = api
